@@ -7,6 +7,7 @@ string choice = "";
 
 while (choice != "5")
 {
+    // 
     Console.WriteLine("Please select one of the following choices:");
     Console.WriteLine("1. Write a new entry");
     Console.WriteLine("2. Display the journal");
