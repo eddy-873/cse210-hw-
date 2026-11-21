@@ -1,72 +1,90 @@
-using System;
-
-Journal theJournal = new Journal();
-PromptGenerator Prompt = new PromptGenerator();
-
-string choice = "";
-
-while (choice != "5")
+class Program
 {
-    // 
-    Console.WriteLine("Please select one of the following choices:");
-    Console.WriteLine("1. Write a new entry");
-    Console.WriteLine("2. Display the journal");
-    Console.WriteLine("3. Save the journal");
-    Console.WriteLine("4. Load the journal");
-    Console.WriteLine("5. Quit");
-
-    Console.Write("What would you like to do? ");
-    choice = Console.ReadLine();
-
-   if (choice == "1")
+    static void Main(string[] args)
     {
-        string promptText = Prompt.GetRandomPrompt();
+        //Initialize core components
+        Journal journal = new Journal();
+        PromptGenerator promptGenerator = new PromptGenerator();
+        bool running = true;
 
-        Console.WriteLine(promptText);
-        Console.Write("> ");
+        Console.WriteLine("Welcome to the Journal Program!");
+        Console.WriteLine("********************************");
+
+        //Main program loop
+        while (running)
+        {
+            DisplayMenu();
+            string choice = Console.ReadLine();
+
+            //Process user choice
+            switch (choice)
+            {
+                case "1":
+                    WriteNewEntry(journal, promptGenerator);
+                    break;
+                case "2":
+                    journal.DisplayAll();
+                    break;
+                case "3":
+                    LoadJournal(journal);
+                    break;
+                case "4":
+                    SaveJournal(journal);
+                    break;
+                case "5":
+                    running = false;
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+
+        Console.WriteLine("Thank you for using the Journal Program!");
+    }
+
+    // Displays the main menu options to the user
+    static void DisplayMenu()
+    {
+        Console.WriteLine("\nPlease select one of the following choices:");
+        Console.WriteLine("1. Write a new entry");
+        Console.WriteLine("2. Display the journal");
+        Console.WriteLine("3. Load the journal from a file");
+        Console.WriteLine("4. Save the journal to a file");
+        Console.WriteLine("5. Exit");
+        Console.Write("Enter your choice (1-5): ");
+    }
+
+    // Handles the creation of a new journal entry
+    // The Journal object to add entries to
+    // The PromptGenerator to get random prompts
+    static void WriteNewEntry(Journal journal, PromptGenerator promptGenerator)
+    {
+        string prompt = promptGenerator.GetRandomPrompt();
+        Console.WriteLine($"\nPrompt: {prompt}");
+        Console.Write("Your response: ");
         string response = Console.ReadLine();
+        string date = DateTime.Now.ToString("MM/dd/yyyy");
 
-        DateTime currentDate = DateTime.Now;
-        string date = currentDate.ToShortDateString();
+        Entry entry = new Entry(date, prompt, response);
+        journal.AddEntry(entry);
 
-        Entry newEntry = new Entry();
-
-        newEntry._date = date;
-        newEntry._prompt = promptText;
-        newEntry._entryText = response;
-
-        theJournal.AddEntry(newEntry);
+        Console.WriteLine("Entry added successfully!");
     }
-    else if (choice == "2")
+
+    // Handles saving the journal to a file
+    static void SaveJournal(Journal journal)
     {
-        theJournal.DisplayAll();
-    }
-    else if (choice == "3")
-    {
-        Console.Write("What is the filename? ");
+        Console.Write("Enter filename to save: ");
         string filename = Console.ReadLine();
-
-        theJournal.SaveToFile(filename);
-
-        Console.WriteLine("Journal saved successfully.");
+        journal.SaveToFile(filename);
     }
-    else if (choice == "4")
+
+    // Handles loading the journal from a file
+    static void LoadJournal(Journal journal)
     {
-        Console.Write("What is the filename? ");
+        Console.Write("Enter filename to load: ");
         string filename = Console.ReadLine();
-
-        theJournal.LoadFromFile(filename);
-
-        Console.WriteLine("Journal loaded successfully.");
+        journal.LoadFromFile(filename);
     }
-    else if (choice == "5")
-    {
-        Console.WriteLine("Goodbye!");
-    }
-    else
-    {
-        Console.WriteLine("Invalid choice. Please try again.");
-    }
-    Console.WriteLine();
-
 }
